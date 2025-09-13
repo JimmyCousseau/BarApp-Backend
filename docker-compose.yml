@@ -1,0 +1,27 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://root:pass@mongo:27017/bar-app?authSource=admin
+      - JWT_KEY=a03c5530e9b6d1dc9aaa9f4e62ddfdebbce3249da0dd0ce21cd748a0fc4cb40704b8eb2c340d9abb5b0461233be1a218d42ff7303a2ea4a51df854e732b90504
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    environment:
+      - MONGO_INITDB_DATABASE=bar-app
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    command: mongod --auth
+
+volumes:
+  mongo-data:
